@@ -3,7 +3,8 @@ const express = require('express');
 const request = require('request-promise-native');
 const NodeCache = require('node-cache');
 const session = require('express-session');
-const opn = require('open');
+const bodyParser = require("body-parser");
+// const opn = require('open');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -219,7 +220,9 @@ app.get('/error', (req, res) => {
   res.end();
 });
 
-app.get('/post', (req, res) => {
+app.use(bodyParser.json())
+
+app.post('/post', (req, res) => {
     console.log(req.body)
     res.status(200).end()
 });
