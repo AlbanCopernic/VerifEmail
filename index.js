@@ -6,7 +6,7 @@ const session = require('express-session');
 const opn = require('open');
 const app = express();
 
-const PORT = 3000;
+const PORT = 443;
 
 const refreshTokenStore = {};
 const accessTokenCache = new NodeCache({ deleteOnExpire: true });
@@ -35,8 +35,10 @@ if (process.env.SCOPE) {
   SCOPES = (process.env.SCOPE.split(/ |, ?|%20/)).join(' ');
 }
 
+const DOMAIN = 'https://gdoghdsfogsdfo.onrender.com'
+
 // On successful install, users will be redirected to /oauth-callback
-const REDIRECT_URI = `http://localhost:${PORT}/oauth-callback`;
+const REDIRECT_URI = `${DOMAIN}/oauth-callback`;
 
 //===========================================================================//
 
@@ -222,5 +224,5 @@ app.get('/post', (req, res) => {
     res.status(200).end()
 });
 
-app.listen(PORT, () => console.log(`=== Starting your app on http://localhost:${PORT} ===`));
-opn(`http://localhost:${PORT}`);
+app.listen(PORT, () => console.log(`=== Listening on port : ${PORT} ===`));
+// opn(DOMAIN);
