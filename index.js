@@ -172,9 +172,8 @@ app.use(bodyParser.json())
 
 app.post('/post', (req, res) => {
     res.status(200).end()
+    console.log("truc")
     req.body.forEach(element => {
-      // const accessToken = getAccessToken(req.sessionID)
-      // console.log(accessToken)
       switch(element.subscriptionType) {
         case 'contact.propertyChange':
           console.log('propertyChange');
