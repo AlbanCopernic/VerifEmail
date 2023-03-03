@@ -223,7 +223,8 @@ app.get('/error', (req, res) => {
 app.use(bodyParser.json())
 
 app.post('/post', (req, res) => {
-    console.log(req.body)
+    console.log(req)
+    res.send("truc")
     res.status(200).end()
 });
 
