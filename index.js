@@ -225,7 +225,7 @@ app.use(bodyParser.json())
 
 app.post('/post', (req, res) => {
     res.status(200).end()
-    req.body.foreach(element => {
+    req.body.forEach(element => {
       switch(element.subscriptionType) {
         case 'contact.propertyChange':
           console.log('propertyChange');
