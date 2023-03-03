@@ -149,6 +149,23 @@ const displayContactName = (res, contact) => {
   res.write(`<p>Contact name: ${firstname.value} ${lastname.value}</p>`);
 };
 
+const getNewAccessToken = async (req) => {
+  
+  const authCodeProof = {
+    grant_type: 'refresh_token',
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    redirect_uri: REDIRECT_URI,
+    code: req.query.code
+  };
+  try {
+    const requestBody = await axios.post('https://api.hubspot.com/oauth/v1/token', querystring.stringify(authCodeProof))
+    accessTokenCache.set(req.sessionID, requestBody.data.access_token, Math.round(tokens.expires_in * 0.75));
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 app.get('/', async (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.write(`<h2>HubSpot OAuth 2.0 Quickstart App</h2>`);
@@ -171,22 +188,11 @@ app.get('/error', (req, res) => {
 
 app.use(bodyParser.json())
 
-app.post('/post', (req, res) => {
+app.post('/post', async (req, res) => {
     res.status(200).end()
     req.body.forEach(element => {
       if (!isAuthorized(req.sessionID)) {
-        const authCodeProof = {
-          grant_type: 'refresh_token',
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-          redirect_uri: REDIRECT_URI,
-          code: req.query.code
-        };
-        try {
-          accessTokenCache.set(req.sessionID, axios.post('https://api.hubspot.com/oauth/v1/token', querystring.stringify(authCodeProof)).data.access_token, Math.round(tokens.expires_in * 0.75));
-        } catch (error) {
-          console.error(error)
-        }
+        getNewAccessToken(req)
       }
       switch(element.subscriptionType) {
         case 'contact.propertyChange':
@@ -199,7 +205,7 @@ app.post('/post', (req, res) => {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
               }).then(response => {
-              console.log(response.data.data);
+              // console.log(response.data.data);
             }).catch(function (error) {
               console.error(error)
             })
