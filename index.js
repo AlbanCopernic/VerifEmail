@@ -172,7 +172,7 @@ app.use(bodyParser.json())
 
 app.post('/post', (req, res) => {
     res.status(200).end()
-    console.log("truc")
+    console.log(req)
     req.body.forEach(element => {
       if (!isAuthorized(req.sessionID)) {
         const authCodeProof = {
