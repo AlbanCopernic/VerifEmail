@@ -5,7 +5,8 @@ const NodeCache = require('node-cache');
 const session = require('express-session');
 const bodyParser = require("body-parser");
 const axios = require('axios');
-const hubspot = require('@hubspot/api-client');
+// const hubspot = require('@hubspot/api-client');
+const querystring = require('node:querystring')
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -183,7 +184,7 @@ app.post('/post', (req, res) => {
           code: req.query.code
         };
         try {
-          const responseBody = axios.post('https://api.hubspot.com/oauth/v1/token', queryString.stringify(authCodeProof));
+          const responseBody = axios.post('https://api.hubspot.com/oauth/v1/token', querystring.stringify(authCodeProof));
           accessTokenCache.set(req.sessionID, responseBody.data.access_token, Math.round(tokens.expires_in * 0.75));
         } catch (error) {
           console.error(error)
