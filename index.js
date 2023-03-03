@@ -200,11 +200,12 @@ app.post('/post', async (req, res) => {
           axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
             // console.log(response.data)
             const accessToken = accessTokenCache.get(req.sessionID)
-            axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`,
-              headers = {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-              }).then(response => {
+            console.log(accessToken)
+            // axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`,
+            //   headers = {
+            //     Authorization: `Bearer ${accessToken}`,
+            //     'Content-Type': 'application/json'
+            //   }).then(response => {
               // console.log(response.data.data);
             }).catch(function (error) {
               console.error(error)
