@@ -39,8 +39,8 @@ app.use(session({
  
 const authUrl =
   'https://app.hubspot.com/oauth/authorize' +
-  `?client_id=${encodeURIComponent(CLIENT_ID)}`
-  `&scope=${encodeURIComponent(SCOPES)}`
+  `?client_id=${encodeURIComponent(CLIENT_ID)}` +
+  `&scope=${encodeURIComponent(SCOPES)}` +
   `&redirect_uri=${REDIRECT_URI}`;
  
 console.log(authUrl)
