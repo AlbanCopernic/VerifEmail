@@ -5,7 +5,7 @@ const NodeCache = require('node-cache');
 const session = require('express-session');
 const bodyParser = require("body-parser");
 const axios = require('axios');
-// const opn = require('open');
+const hubspot = require('@hubspot/api-client');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -17,21 +17,11 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
     throw new Error('Missing CLIENT_ID or CLIENT_SECRET environment variable.')
 }
 
-//===========================================================================//
-//  HUBSPOT APP CONFIGURATION
-//
-//  All the following values must match configuration settings in your app.
-//  They will be used to build the OAuth URL, which users visit to begin
-//  installing. If they don't match your app's configuration, users will
-//  see an error page.
+const hubspotClient = new hubspot.Client({"accessToken":"YOUR_ACCESS_TOKEN"});
 
-// Replace the following with the values from your app auth config, 
-// or set them as environment variables before running.
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
-// Scopes for this app will default to `crm.objects.contacts.read`
-// To request others, set the SCOPE environment variable instead
 let SCOPES = ['crm.objects.contacts.read'];
 if (process.env.SCOPE) {
   SCOPES = (process.env.SCOPE.split(/ |, ?|%20/)).join(' ');
@@ -39,35 +29,21 @@ if (process.env.SCOPE) {
 
 const DOMAIN = 'https://gdoghdsfogsdfo.onrender.com'
 
-// On successful install, users will be redirected to /oauth-callback
 const REDIRECT_URI = `${DOMAIN}/oauth-callback`;
 
-//===========================================================================//
-
-// Use a session to keep track of client ID
 app.use(session({
   secret: Math.random().toString(36).substring(2),
   resave: false,
   saveUninitialized: true
 }));
  
-//================================//
-//   Running the OAuth 2.0 Flow   //
-//================================//
-
-// Step 1
-// Build the authorization URL to redirect a user
-// to when they choose to install the app
 const authUrl =
   'https://app.hubspot.com/oauth/authorize' +
-  `?client_id=${encodeURIComponent(CLIENT_ID)}` + // app's client ID
-  `&scope=${encodeURIComponent(SCOPES)}` + // scopes being requested by the app
-  `&redirect_uri=${REDIRECT_URI}`; // where to send the user after the consent page
-// const authUrl = 'https://app-eu1.hubspot.com/oauth/authorize?client_id=9eaefd2f-937d-4d9c-a44c-84c6202547e5&redirect_uri=http://localhost:3000/oauth-callback&scope=forms%20crm.objects.contacts.read%20crm.objects.contacts.write'
-  
+  `?client_id=${encodeURIComponent(CLIENT_ID)}`
+  `&scope=${encodeURIComponent(SCOPES)}`
+  `&redirect_uri=${REDIRECT_URI}`;
+ 
 console.log(authUrl)
-// Redirect the user from the installation page to
-// the authorization URL
 app.get('/install', (req, res) => {
   console.log('');
   console.log('=== Initiating OAuth 2.0 flow with HubSpot ===');
@@ -77,19 +53,9 @@ app.get('/install', (req, res) => {
   console.log('===> Step 2: User is being prompted for consent by HubSpot');
 });
 
-// Step 2
-// The user is prompted to give the app access to the requested
-// resources. This is all done by HubSpot, so no work is necessary
-// on the app's end
-
-// Step 3
-// Receive the authorization code from the OAuth 2.0 Server,
-// and process it based on the query parameters that are passed
 app.get('/oauth-callback', async (req, res) => {
   console.log('===> Step 3: Handling the request sent by the server');
 
-  // Received a user authorization code, so now combine that with the other
-  // required values and exchange both for an access token and a refresh token
   if (req.query.code) {
     console.log('       > Received an authorization token');
 
@@ -101,31 +67,21 @@ app.get('/oauth-callback', async (req, res) => {
       code: req.query.code
     };
 
-    // Step 4
-    // Exchange the authorization code for an access token and refresh token
     console.log('===> Step 4: Exchanging authorization code for an access token and refresh token');
     const token = await exchangeForTokens(req.sessionID, authCodeProof);
     if (token.message) {
       return res.redirect(`/error?msg=${token.message}`);
     }
 
-    // Once the tokens have been retrieved, use them to make a query
-    // to the HubSpot API
     res.redirect(`/`);
   }
 });
-
-//==========================================//
-//   Exchanging Proof for an Access Token   //
-//==========================================//
 
 const exchangeForTokens = async (userId, exchangeProof) => {
   try {
     const responseBody = await request.post('https://api.hubapi.com/oauth/v1/token', {
       form: exchangeProof
     });
-    // Usually, this token data should be persisted in a database and associated with
-    // a user identity.
     const tokens = JSON.parse(responseBody);
     refreshTokenStore[userId] = tokens.refresh_token;
     accessTokenCache.set(userId, tokens.access_token, Math.round(tokens.expires_in * 0.75));
@@ -150,8 +106,6 @@ const refreshAccessToken = async (userId) => {
 };
 
 const getAccessToken = async (userId) => {
-  // If the access token has expired, retrieve
-  // a new one using the refresh token
   if (!accessTokenCache.get(userId)) {
     console.log('Refreshing expired access token');
     await refreshAccessToken(userId);
@@ -162,10 +116,6 @@ const getAccessToken = async (userId) => {
 const isAuthorized = (userId) => {
   return refreshTokenStore[userId] ? true : false;
 };
-
-//====================================================//
-//   Using an Access Token to Query the HubSpot API   //
-//====================================================//
 
 const getContact = async (accessToken) => {
   console.log('');
@@ -187,10 +137,6 @@ const getContact = async (accessToken) => {
     return JSON.parse(e.response.body);
   }
 };
-
-//========================================//
-//   Displaying information to the user   //
-//========================================//
 
 const displayContactName = (res, contact) => {
   if (contact.status === 'error') {
@@ -226,11 +172,17 @@ app.use(bodyParser.json())
 app.post('/post', (req, res) => {
     res.status(200).end()
     req.body.forEach(element => {
+      const accessToken = getAccessToken(req.sessionID)
+      console.log(accessToken)
       switch(element.subscriptionType) {
         case 'contact.propertyChange':
           console.log('propertyChange');
           axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
-            console.log(response.data)
+            // console.log(response.data)
+            axios.patch(`https://api.hubspot.com/crm/v3/objects/contacts/${element.objectId}`, {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            })
           }).catch(function (error) {
             console.error(error);
           });
