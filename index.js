@@ -174,23 +174,30 @@ app.post('/post', (req, res) => {
     res.status(200).end()
     console.log("truc")
     req.body.forEach(element => {
-      switch(element.subscriptionType) {
-        case 'contact.propertyChange':
-          console.log('propertyChange');
-          axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
-            // console.log(response.data)
-            axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`).then(response => {
-              console.log(response.data);
+      if (isAuthorized(req.sessionID)) {
+        const accessToken = getAccessToken(req.sessionID);
+        switch(element.subscriptionType) {
+          case 'contact.propertyChange':
+            console.log('propertyChange');
+            axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
+              // console.log(response.data)
+              axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`,
+                headers = {
+                  Authorization: `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json'
+                }).then(response => {
+                console.log(response.data);
+              }).catch(function (error) {
+                console.error(error)
+              })
             }).catch(function (error) {
-              console.error(error)
-            })
-          }).catch(function (error) {
-            console.error(error);
-          });
-        break;
-        default:
-          console.log('défaut');
+              console.error(error);
+            });
           break;
+          default:
+            console.log('défaut');
+            break;
+        }
       }
     })
 });
