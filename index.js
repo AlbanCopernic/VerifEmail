@@ -6,7 +6,7 @@ const session = require('express-session');
 const bodyParser = require("body-parser");
 const axios = require('axios');
 // const hubspot = require('@hubspot/api-client');
-const querystring = require('node:querystring')
+const querystring = require('querystring')
 const app = express();
 
 const PORT = process.env.PORT || 3000;
