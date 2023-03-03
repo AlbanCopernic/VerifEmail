@@ -199,6 +199,9 @@ app.post('/post', (req, res) => {
             break;
         }
       }
+      else {
+        console.log(refreshTokenStore);
+      }
     })
 });
 
