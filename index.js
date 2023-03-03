@@ -225,9 +225,8 @@ app.use(bodyParser.json())
 
 app.post('/post', (req, res) => {
     res.status(200).end()
-    for(let i=0; i<length(req.body); i++) {
-      console.log("truc");
-      switch(req.body[i].subscriptionType) {
+    req.body.foreach(element => {
+      switch(element.subscriptionType) {
         case 'contact.propertyChange':
           console.log('propertyChange');
           axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
@@ -240,7 +239,7 @@ app.post('/post', (req, res) => {
           console.log('défaut');
           break;
       }
-    }
+    })
 });
 
 app.listen(PORT, () => console.log(`=== Listening on port : ${PORT} ===`));
