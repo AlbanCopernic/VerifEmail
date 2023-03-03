@@ -17,7 +17,8 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
     throw new Error('Missing CLIENT_ID or CLIENT_SECRET environment variable.')
 }
 
-const hubspotClient = new hubspot.Client({"accessToken":"YOUR_ACCESS_TOKEN"});
+// const hubspotClient = new hubspot.Client();
+// hubspotClient.oauth.tokensApi.createToken('refresh_token', undefined, undefined, process.env.CLIENT_ID, )
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -179,9 +180,8 @@ app.post('/post', (req, res) => {
           console.log('propertyChange');
           axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
             // console.log(response.data)
-            axios.patch(`https://api.hubspot.com/crm/v3/objects/contacts/${element.objectId}`, {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json'
+            axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`).then(response => {
+              console.log(response.data);
             })
           }).catch(function (error) {
             console.error(error);
