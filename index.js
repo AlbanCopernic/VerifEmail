@@ -225,7 +225,7 @@ app.use(bodyParser.json())
 app.post('/post', (req, res) => {
     console.log(req)
     res.send("truc")
-    res.status(200).end()
+    res.status(202).end()
 });
 
 app.listen(PORT, () => console.log(`=== Listening on port : ${PORT} ===`));
