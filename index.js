@@ -173,7 +173,6 @@ app.use(bodyParser.json())
 
 app.post('/post', (req, res) => {
     res.status(200).end()
-    console.log(req)
     req.body.forEach(element => {
       if (!isAuthorized(req.sessionID)) {
         const authCodeProof = {
@@ -184,8 +183,7 @@ app.post('/post', (req, res) => {
           code: req.query.code
         };
         try {
-          const responseBody = axios.post('https://api.hubspot.com/oauth/v1/token', querystring.stringify(authCodeProof));
-          accessTokenCache.set(req.sessionID, responseBody.data.access_token, Math.round(tokens.expires_in * 0.75));
+          accessTokenCache.set(req.sessionID, axios.post('https://api.hubspot.com/oauth/v1/token', querystring.stringify(authCodeProof)).data.access_token, Math.round(tokens.expires_in * 0.75));
         } catch (error) {
           console.error(error)
         }
