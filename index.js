@@ -174,33 +174,42 @@ app.post('/post', (req, res) => {
     res.status(200).end()
     console.log("truc")
     req.body.forEach(element => {
-      if (isAuthorized(req.sessionID)) {
-        const accessToken = getAccessToken(req.sessionID);
-        switch(element.subscriptionType) {
-          case 'contact.propertyChange':
-            console.log('propertyChange');
-            axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
-              // console.log(response.data)
-              axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`,
-                headers = {
-                  Authorization: `Bearer ${accessToken}`,
-                  'Content-Type': 'application/json'
-                }).then(response => {
-                console.log(response.data);
-              }).catch(function (error) {
-                console.error(error)
-              })
-            }).catch(function (error) {
-              console.error(error);
-            });
-          break;
-          default:
-            console.log('défaut');
-            break;
+      if (!isAuthorized(req.sessionID)) {
+        const authCodeProof = {
+          grant_type: 'refresh_token',
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          redirect_uri: REDIRECT_URI,
+          code: req.query.code
+        };
+        try {
+          const responseBody = axios.post('https://api.hubspot.com/oauth/v1/token', queryString.stringify(authCodeProof));
+          accessTokenCache.set(req.sessionID, responseBody.data.access_token, Math.round(tokens.expires_in * 0.75));
+        } catch (error) {
+          console.error(error)
         }
       }
-      else {
-        console.log(refreshTokenStore);
+      switch(element.subscriptionType) {
+        case 'contact.propertyChange':
+          console.log('propertyChange');
+          axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
+            // console.log(response.data)
+            const accessToken = accessTokenCache.get(req.sessionID)
+            axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`,
+              headers = {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+              }).then(response => {
+              console.log(response.data);
+            }).catch(function (error) {
+              console.error(error)
+            })
+          }).catch(function (error) {
+            console.error(error);
+          });
+        break;
+        default:
+          break;
       }
     })
 });
