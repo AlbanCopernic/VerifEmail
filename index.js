@@ -236,6 +236,7 @@ app.post('/post', (req, res) => {
         });
       break;
       default:
+        console.log('défaut');
         break;
     }
 });
