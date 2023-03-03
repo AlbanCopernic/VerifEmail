@@ -223,8 +223,19 @@ app.get('/error', (req, res) => {
 app.use(bodyParser.json())
 
 app.post('/post', (req, res) => {
-    console.log(req.body)
-    res.status(202).end()
+    res.status(200).end()
+    console.log(req.body.subscriptionType)
+    switch(req.body.subscriptionType) {
+      case 'contact.propertyChange':
+        axios.get('https://api.captainverify.com/v2/verify?phone=0000000000?apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
+          console.log(response.body.result)
+        }).catch(function (error) {
+          console.error(error);
+        });
+      break;
+      default:
+        break;
+    }
 });
 
 app.listen(PORT, () => console.log(`=== Listening on port : ${PORT} ===`));
