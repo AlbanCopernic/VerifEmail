@@ -230,7 +230,7 @@ app.post('/post', (req, res) => {
         console.log('propertyChange');
         axios.get('https://api.captainverify.com/verify?phone=+33000000000?apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
           console.log(response)
-          console.log(response[0].result)
+          // console.log(response[0].result)
         }).catch(function (error) {
           console.error(error);
         });
