@@ -227,6 +227,7 @@ app.post('/post', (req, res) => {
     res.status(200).end()
     switch(req.body[0].subscriptionType) {
       case 'contact.propertyChange':
+        console.log('propertyChange');
         axios.get('https://api.captainverify.com/v2/verify?phone=0000000000?apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
           console.log(response.body)
           console.log(response.body.result)
