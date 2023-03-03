@@ -199,7 +199,7 @@ app.post('/post', (req, res) => {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
               }).then(response => {
-              console.log(response.data);
+              console.log(response.data.data);
             }).catch(function (error) {
               console.error(error)
             })
