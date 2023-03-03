@@ -182,6 +182,8 @@ app.post('/post', (req, res) => {
             // console.log(response.data)
             axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`).then(response => {
               console.log(response.data);
+            }).catch(function (error) {
+              console.error(error)
             })
           }).catch(function (error) {
             console.error(error);
