@@ -224,7 +224,8 @@ app.use(bodyParser.json())
 
 app.post('/post', (req, res) => {
     res.status(200).end()
-    console.log(req.body.subscriptionType)
+    console.log(req.body);
+    console.log(req.body["subscriptionType"]);
     switch(req.body.subscriptionType) {
       case 'contact.propertyChange':
         axios.get('https://api.captainverify.com/v2/verify?phone=0000000000?apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
@@ -234,6 +235,7 @@ app.post('/post', (req, res) => {
         });
       break;
       default:
+        console.log('défaut');
         break;
     }
 });
