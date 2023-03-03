@@ -207,9 +207,9 @@ app.post('/post', async (req, res) => {
             //     'Content-Type': 'application/json'
             //   }).then(response => {
               // console.log(response.data.data);
-            }).catch(function (error) {
-              console.error(error)
-            })
+            // }).catch(function (error) {
+            //   console.error(error)
+            // })
           }).catch(function (error) {
             console.error(error);
           });
