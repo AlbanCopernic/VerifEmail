@@ -170,16 +170,19 @@ const getNewAccessToken = async (req) => {
 }
 
 async function writeToken(token) {
-  try {
-    await fs.appendFile('./tokenFile.txt', token)
-  } catch (error) {
-    console.log(error)
-  }
+  fs.writeFile('./tokenFile.txt', 'test', function(err, result) {
+    if(err) console.log(err);
+  });
+  // try {
+  //   await fs.appendFile('./tokenFile.txt', token)
+  // } catch (error) {
+  //   console.log(error)
+  // }
 }
 
 async function readToken() {
   try {
-    const data = fs.readFileSync('./fichierdetest.txt', 'utf8');
+    const data = fs.readFileSync('./tokenFile.txt', 'utf8');
     console.log(data);
   } catch (err) {
     console.error(err);
