@@ -5,7 +5,6 @@ const NodeCache = require('node-cache');
 const session = require('express-session');
 const bodyParser = require("body-parser");
 const axios = require('axios');
-// const hubspot = require('@hubspot/api-client');
 const querystring = require('querystring')
 const app = express();
 
@@ -160,6 +159,7 @@ const getNewAccessToken = async (req) => {
   };
   try {
     const requestBody = await axios.post('https://api.hubspot.com/oauth/v1/token', querystring.stringify(authCodeProof))
+    console.log(`access token : ${requestBody.data.accessToken}`)
     accessTokenCache.set(req.sessionID, requestBody.data.access_token, Math.round(tokens.expires_in * 0.75));
   } catch (error) {
     console.error(error)
@@ -199,8 +199,8 @@ app.post('/post', async (req, res) => {
           console.log('propertyChange');
           axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
             // console.log(response.data)
-            const accessToken = accessTokenCache.get(req.sessionID)
-            console.log(accessToken)
+            const refreshTokenStore = refreshTokenStore.get(req.sessionID)
+            console.log(refreshTokenStore)
             // axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`,
             //   headers = {
             //     Authorization: `Bearer ${accessToken}`,
