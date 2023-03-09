@@ -5,7 +5,8 @@ const NodeCache = require('node-cache');
 const session = require('express-session');
 const bodyParser = require("body-parser");
 const axios = require('axios');
-const querystring = require('querystring')
+const querystring = require('querystring');
+const { write } = require('fs');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -28,7 +29,7 @@ if (process.env.SCOPE) {
   SCOPES = (process.env.SCOPE.split(/ |, ?|%20/)).join(' ');
 }
 
-const DOMAIN = 'https://gdoghdsfogsdfo.onrender.com'
+const DOMAIN = process.env.DOMAIN
 
 const REDIRECT_URI = `${DOMAIN}/oauth-callback`;
 
@@ -166,6 +167,23 @@ const getNewAccessToken = async (req) => {
   }
 }
 
+async function writeToken(token) {
+  try {
+    await fs.appendFile('./tokenFile.txt', token)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function readToken() {
+  try {
+    const data = fs.readFileSync('./fichierdetest.txt', 'utf8');
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 app.get('/', async (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.write(`<h2>HubSpot OAuth 2.0 Quickstart App</h2>`);
@@ -179,6 +197,14 @@ app.get('/', async (req, res) => {
   }
   res.end();
 });
+
+app.get('/write', (req, res) => {
+  writeToken('test');
+})
+
+app.get('/read', (req, res) => {
+  readToken();
+})
 
 app.get('/error', (req, res) => {
   res.setHeader('Content-Type', 'text/html');
