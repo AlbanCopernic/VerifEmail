@@ -202,10 +202,12 @@ app.get('/', async (req, res) => {
 
 app.get('/write', (req, res) => {
   writeToken('test');
+  res.write('truc');
 })
 
 app.get('/read', (req, res) => {
   readToken();
+  res.write('truc2');
 })
 
 app.get('/error', (req, res) => {
