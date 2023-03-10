@@ -191,7 +191,8 @@ app.get('/', async (req, res) => {
     const contact = await getContact(accessToken);
     res.write(`<h4>Access token: ${accessToken}</h4>`);
     displayContactName(res, contact);
-    await writeToken(req.sessionID)
+    console.log(refreshTokenStore[req.sessionID])
+    // await writeToken(req.sessionID)
   } else {
     res.write(`<a href="/install"><h3>Install the app</h3></a>`);
   }
@@ -228,18 +229,7 @@ app.post('/post', async (req, res) => {
         case 'contact.propertyChange':
           console.log('propertyChange');
           axios.get('https://api.captainverify.com/verify?phone=+33000000000&apikey=HKfoSrOjBmk1pLhAcXuxOiD0tvgts24a').then(function (response) {
-            // console.log(response.data)
-            const refreshTokenStore = refreshTokenStore.get(req.sessionID)
-            console.log(refreshTokenStore)
-            // axios.get(`https://api.hubspot.com/crm/v3/objects/contacts`,
-            //   headers = {
-            //     Authorization: `Bearer ${accessToken}`,
-            //     'Content-Type': 'application/json'
-            //   }).then(response => {
-              // console.log(response.data.data);
-            // }).catch(function (error) {
-            //   console.error(error)
-            // })
+            
           }).catch(function (error) {
             console.error(error);
           });
