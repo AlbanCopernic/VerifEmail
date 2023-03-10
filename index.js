@@ -8,7 +8,7 @@ const axios = require('axios');
 const querystring = require('querystring');
 const { write } = require('fs');
 const app = express();
-const fs = require("fs");
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 
 const PORT = process.env.PORT || 3000;
@@ -35,6 +35,8 @@ const DOMAIN = process.env.DOMAIN
 
 const REDIRECT_URI = `${DOMAIN}/oauth-callback`;
 
+const MONGO_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster.ybsxrpr.mongodb.net/?retryWrites=true&w=majority`
+
 app.use(session({
   secret: Math.random().toString(36).substring(2),
   resave: false,
@@ -47,7 +49,7 @@ const authUrl =
   `&scope=${encodeURIComponent(SCOPES)}` +
   `&redirect_uri=${REDIRECT_URI}`;
  
-console.log(authUrl)
+
 app.get('/install', (req, res) => {
   console.log('');
   console.log('=== Initiating OAuth 2.0 flow with HubSpot ===');
@@ -169,24 +171,17 @@ const getNewAccessToken = async (req) => {
   }
 }
 
-async function writeToken(token) {
-  fs.writeFile('./tokenFile.txt', 'test', function(err, result) {
-    if(err) console.log(err);
+async function writeToken() {
+  const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+  client.connect(err => {
+    const collection = client.db("RefreshTokenEmailVerif").collection("tokenInfo");
+    collection.insertOne({ portalId: 12121212, refreshToken: "gsdifughsldfhgsldfhgsdhfgmshdfipghsdf"})
+    client.close();
   });
-  // try {
-  //   await fs.appendFile('./tokenFile.txt', token)
-  // } catch (error) {
-  //   console.log(error)
-  // }
 }
 
 async function readToken() {
-  try {
-    const data = fs.readFileSync('./tokenFile.txt', 'utf8');
-    console.log(data);
-  } catch (err) {
-    console.error(err);
-  }
+  
 }
 
 app.get('/', async (req, res) => {
@@ -204,8 +199,8 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/write', (req, res) => {
-  writeToken('test');
-  res.write('truc');
+  writeToken();
+  res.write('gg');
 })
 
 app.get('/read', (req, res) => {
