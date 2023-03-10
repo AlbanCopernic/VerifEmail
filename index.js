@@ -174,8 +174,10 @@ const getNewAccessToken = async (req) => {
 async function writeToken() {
   const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
   client.connect(err => {
-    const collection = client.db("RefreshTokenEmailVerif").collection("tokenInfo");
-    collection.insertOne({ portalId: 12121212, refreshToken: "gsdifughsldfhgsldfhgsdhfgmshdfipghsdf"})
+    client.db("RefreshTokenEmailVerif").insertOne({ portalId: 12121212, refreshToken: "gsdifughsldfhgsldfhgsdhfgmshdfipghsdf"}, function (err, res) {
+      if (err) throw err;
+      console.log("Data inserted");
+    })
     console.log("gg");
     client.close();
   });
