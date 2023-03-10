@@ -191,7 +191,10 @@ app.get('/', async (req, res) => {
     const contact = await getContact(accessToken);
     res.write(`<h4>Access token: ${accessToken}</h4>`);
     displayContactName(res, contact);
+    console.log(req.sessionID)
+    console.log(typeof req.sessionID)
     console.log(refreshTokenStore[req.sessionID])
+    console.log(typeof refreshTokenStore[req.sessionID])
     // await writeToken(req.sessionID)
   } else {
     res.write(`<a href="/install"><h3>Install the app</h3></a>`);
