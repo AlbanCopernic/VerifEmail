@@ -172,6 +172,7 @@ const getNewAccessToken = async (req) => {
 }
 
 async function writeToken(portalId) {
+  console.log("uri : "+ MONGO_URI)
   const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
   console.log("envoi des infos")
   MongoClient.connect(uri).then(async (client) => {
