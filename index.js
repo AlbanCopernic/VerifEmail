@@ -186,16 +186,16 @@ async function readToken() {
 app.get('/', async (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.write(`<h2>HubSpot OAuth 2.0 Quickstart App</h2>`);
-  if (isAuthorized(req.sessionID)) {
+  if (isAuthorized(1)) {
     const accessToken = await getAccessToken();
     const contact = await getContact(accessToken);
     res.write(`<h4>Access token: ${accessToken}</h4>`);
     displayContactName(res, contact);
-    console.log(req.sessionID)
-    console.log(typeof req.sessionID)
-    console.log(refreshTokenStore[req.sessionID])
-    console.log(typeof refreshTokenStore[req.sessionID])
-    // await writeToken(req.sessionID)
+    // console.log(req.sessionID)
+    // console.log(typeof req.sessionID)
+    // console.log(refreshTokenStore[req.sessionID])
+    // console.log(typeof refreshTokenStore[req.sessionID])
+    await writeToken(1)
   } else {
     res.write(`<a href="/install"><h3>Install the app</h3></a>`);
   }
