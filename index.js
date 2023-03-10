@@ -83,16 +83,25 @@ app.get('/oauth-callback', async (req, res) => {
   }
 });
 
+async function writeToken(portalId, refreshToken) {
+  const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+  MongoClient.connect(uri).then(async (client) => {
+    await client.db("RefreshTokenEmailVerif").collection("tokenInfo").insertOne({ portalId: portalId, refreshToken: refreshToken});
+    client.close()
+  }).catch(err => {
+    console.log(err);
+  });
+}
+
 const exchangeForTokens = async (userId, exchangeProof) => {
   try {
     const responseBody = await request.post('https://api.hubapi.com/oauth/v1/token', {
       form: exchangeProof
     });
     const tokens = JSON.parse(responseBody);
-    await writeToken(userId, tokens.refreshToken)
     refreshTokenStore[userId] = tokens.refresh_token;
     accessTokenCache.set(userId, tokens.access_token, Math.round(tokens.expires_in * 0.75));
-
+    await writeToken(userId, tokens.refreshToken)
     console.log('       > Received an access token and refresh token');
     return tokens.access_token;
   } catch (e) {
@@ -172,15 +181,7 @@ const getNewAccessToken = async (req) => {
   }
 }
 
-async function writeToken(portalId, refreshToken) {
-  const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-  MongoClient.connect(uri).then(async (client) => {
-    await client.db("RefreshTokenEmailVerif").collection("tokenInfo").insertOne({ portalId: portalId, refreshToken: refreshToken});
-    client.close()
-  }).catch(err => {
-    console.log(err);
-  });
-}
+
 
 async function readToken() {
   
