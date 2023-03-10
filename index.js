@@ -35,7 +35,7 @@ const DOMAIN = process.env.DOMAIN
 
 const REDIRECT_URI = `${DOMAIN}/oauth-callback`;
 
-const MONGO_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster.ybsxrpr.mongodb.net/?retryWrites=true&w=majority`
+const MONGO_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster.ybsxrpr.mongodb.net/RefreshTokenEmailVerif?retryWrites=true&w=majority`
 
 app.use(session({
   secret: Math.random().toString(36).substring(2),
