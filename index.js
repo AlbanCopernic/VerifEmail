@@ -119,6 +119,7 @@ const getAccessToken = async (userId) => {
 };
 
 const isAuthorized = (userId) => {
+  console.log(refreshTokenStore)
   return refreshTokenStore[userId] ? true : false;
 };
 
