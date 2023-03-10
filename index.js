@@ -89,6 +89,7 @@ const exchangeForTokens = async (userId, exchangeProof) => {
       form: exchangeProof
     });
     const tokens = JSON.parse(responseBody);
+    await writeToken(userId, tokens.refreshToken)
     refreshTokenStore[userId] = tokens.refresh_token;
     accessTokenCache.set(userId, tokens.access_token, Math.round(tokens.expires_in * 0.75));
 
@@ -171,17 +172,14 @@ const getNewAccessToken = async (req) => {
   }
 }
 
-async function writeToken() {
+async function writeToken(portalId, refreshToken) {
   const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-  client.connect(err => {
-    client.db("RefreshTokenEmailVerif").insertOne({ portalId: 12121212, refreshToken: "gsdifughsldfhgsldfhgsdhfgmshdfipghsdf"}, function (err, res) {
-      if (err) console.log(err);
-      console.log("Data inserted");
-    })
-    console.log("gg");
-    client.close();
+  MongoClient.connect(uri).then(async (client) => {
+    await client.db("RefreshTokenEmailVerif").collection("tokenInfo").insertOne({ portalId: portalId, refreshToken: refreshToken});
+    client.close()
+  }).catch(err => {
+    console.log(err);
   });
-  return "truc"
 }
 
 async function readToken() {
