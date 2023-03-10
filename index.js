@@ -199,8 +199,8 @@ app.get('/', async (req, res) => {
   res.end();
 });
 
-app.get('/write', (req, res) => {
-  writeToken();
+app.get('/write', async (req, res) => {
+  await writeToken();
   res.write('<p>gg</p>');
   res.end();
 })
