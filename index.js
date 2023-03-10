@@ -78,7 +78,7 @@ app.get('/oauth-callback', async (req, res) => {
     if (token.message) {
       return res.redirect(`/error?msg=${token.message}`);
     }
-
+    await writeToken(userId, refreshTokenStore[userId]);
     res.redirect(`/`);
   }
 });
@@ -92,7 +92,6 @@ const exchangeForTokens = async (userId, exchangeProof) => {
     refreshTokenStore[userId] = tokens.refresh_token;
     accessTokenCache.set(userId, tokens.access_token, Math.round(tokens.expires_in * 0.75));
     console.log('       > Received an access token and refresh token');
-    await writeToken(userId, tokens.refresh_token)
     return tokens.access_token;
   } catch (e) {
     console.error(`       > Error exchanging ${exchangeProof.grant_type} for access token`);
