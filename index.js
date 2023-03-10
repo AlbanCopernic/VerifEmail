@@ -170,10 +170,10 @@ const getNewAccessToken = async (req) => {
   }
 }
 
-async function writeToken(portalId, refreshToken) {
+async function writeToken(portalId) {
   const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
   MongoClient.connect(uri).then(async (client) => {
-    await client.db("RefreshTokenEmailVerif").collection("tokenInfo").insertOne({ portalId: portalId, refreshToken: refreshToken});
+    await client.db("RefreshTokenEmailVerif").collection("tokenInfo").insertOne({ portalId: portalId, refreshToken: refreshTokenStore[portalId]});
     client.close()
   }).catch(err => {
     console.log(err);
@@ -188,11 +188,11 @@ app.get('/', async (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.write(`<h2>HubSpot OAuth 2.0 Quickstart App</h2>`);
   if (isAuthorized(req.sessionID)) {
-    const accessToken = await getAccessToken(req.sessionID);
+    const accessToken = await getAccessToken();
     const contact = await getContact(accessToken);
     res.write(`<h4>Access token: ${accessToken}</h4>`);
     displayContactName(res, contact);
-    await writeToken(userId, tokens.refresh_token)
+    await writeToken(req.sessionID)
   } else {
     res.write(`<a href="/install"><h3>Install the app</h3></a>`);
   }
