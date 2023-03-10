@@ -101,7 +101,7 @@ const exchangeForTokens = async (userId, exchangeProof) => {
     const tokens = JSON.parse(responseBody);
     refreshTokenStore[userId] = tokens.refresh_token;
     accessTokenCache.set(userId, tokens.access_token, Math.round(tokens.expires_in * 0.75));
-    await writeToken(userId, tokens.refreshToken)
+    // await writeToken(userId, tokens.refreshToken)
     console.log('       > Received an access token and refresh token');
     return tokens.access_token;
   } catch (e) {
