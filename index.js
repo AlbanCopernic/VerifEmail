@@ -13,7 +13,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const PORT = process.env.PORT || 3000;
 
-const refreshTokenStore = {};
+var refreshTokenStore = {};
 const accessTokenCache = new NodeCache({ deleteOnExpire: true });
 
 if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
@@ -74,7 +74,7 @@ app.get('/oauth-callback', async (req, res) => {
     };
 
     console.log('===> Step 4: Exchanging authorization code for an access token and refresh token');
-    const token = await exchangeForTokens(1, authCodeProof);
+    const token = await exchangeForTokens(req.sessionID, authCodeProof);
     if (token.message) {
       return res.redirect(`/error?msg=${token.message}`);
     }
@@ -190,7 +190,7 @@ async function readToken() {
 app.get('/', async (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.write(`<h2>HubSpot OAuth 2.0 Quickstart App</h2>`);
-  if (isAuthorized(1)) {
+  if (isAuthorized(req.sessionID)) {
     const accessToken = await getAccessToken();
     const contact = await getContact(accessToken);
     res.write(`<h4>Access token: ${accessToken}</h4>`);
