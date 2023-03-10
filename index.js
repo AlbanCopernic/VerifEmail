@@ -171,8 +171,10 @@ const getNewAccessToken = async (req) => {
 
 async function writeToken(portalId) {
   const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+  console.log("envoi des infos")
   MongoClient.connect(uri).then(async (client) => {
     await client.db("RefreshTokenEmailVerif").collection("tokenInfo").insertOne({ portalId: portalId, refreshToken: refreshTokenStore[portalId]});
+    console.log("succès")
     client.close()
   }).catch(err => {
     console.log(err);
