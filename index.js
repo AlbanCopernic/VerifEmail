@@ -198,7 +198,7 @@ app.get('/', async (req, res) => {
     // console.log(typeof req.sessionID)
     // console.log(refreshTokenStore[req.sessionID])
     // console.log(typeof refreshTokenStore[req.sessionID])
-    await writeToken(1)
+    // await writeToken(1)
   } else {
     res.write(`<a href="/install"><h3>Install the app</h3></a>`);
   }
