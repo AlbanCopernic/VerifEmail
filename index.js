@@ -176,6 +176,7 @@ async function writeToken() {
   client.connect(err => {
     const collection = client.db("RefreshTokenEmailVerif").collection("tokenInfo");
     collection.insertOne({ portalId: 12121212, refreshToken: "gsdifughsldfhgsldfhgsdhfgmshdfipghsdf"})
+    console.log("gg");
     client.close();
   });
 }
