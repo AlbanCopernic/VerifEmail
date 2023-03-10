@@ -179,6 +179,7 @@ async function writeToken() {
     console.log("gg");
     client.close();
   });
+  return "truc"
 }
 
 async function readToken() {
@@ -200,7 +201,8 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/write', async (req, res) => {
-  await writeToken();
+  var truc = await writeToken();
+  console.log(truc);
   res.write('<p>gg</p>');
   res.end();
 })
