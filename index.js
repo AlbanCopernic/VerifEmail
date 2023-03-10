@@ -78,7 +78,6 @@ app.get('/oauth-callback', async (req, res) => {
     if (token.message) {
       return res.redirect(`/error?msg=${token.message}`);
     }
-    await writeToken(userId, refreshTokenStore[userId]);
     res.redirect(`/`);
   }
 });
