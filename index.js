@@ -200,7 +200,8 @@ app.get('/', async (req, res) => {
 
 app.get('/write', (req, res) => {
   writeToken();
-  res.write('gg');
+  res.write('<p>gg</p>');
+  res.end();
 })
 
 app.get('/read', (req, res) => {
