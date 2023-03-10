@@ -191,8 +191,8 @@ app.get('/', async (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.write(`<h2>HubSpot OAuth 2.0 Quickstart App</h2>`);
   if (isAuthorized(req.sessionID)) {
-    const accessToken = await getAccessToken();
-    const contact = await getContact(accessToken);
+    const accessToken = await getAccessToken(req.sessionID);
+    // const contact = await getContact(accessToken);
     res.write(`<h4>Access token: ${accessToken}</h4>`);
     // displayContactName(res, contact);
     // await writeToken(1)
