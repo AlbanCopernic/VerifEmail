@@ -83,7 +83,6 @@ app.get('/oauth-callback', async (req, res) => {
 });
 
 const exchangeForTokens = async (userId, exchangeProof) => {
-  console.log(userId);
   try {
     const responseBody = await request.post('https://api.hubapi.com/oauth/v1/token', {
       form: exchangeProof
@@ -119,7 +118,8 @@ const getAccessToken = async (userId) => {
 };
 
 const isAuthorized = (userId) => {
-  console.log(refreshTokenStore)
+  console.log("auth");
+  console.log(refreshTokenStore);
   return refreshTokenStore[userId] ? true : false;
 };
 
